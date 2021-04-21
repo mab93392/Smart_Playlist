@@ -67,7 +67,7 @@ def track_data(token,song_id): # retreives id of artist of song of interest
         val = sng_data_resp['valence']
         tmp = sng_data_resp['tempo']
 
-        feature_set = [en,ld,spch,act,inst,lv,val,tmp]
+        feature_set = [d,en,ld,spch,act,inst,lv,val,tmp]
 
         if j == 0:
             feature_list = feature_set
