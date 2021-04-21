@@ -10,15 +10,15 @@ def song_list():
             '2eDdFHgqNJltzlvlZFVDWd',   
             '6WqNv8uhWOgg7u3D71MKRu',   
             '2hwOoMtWPtTSSn6WHV7Vp5',   
-            '2JSUHbuYs7K5YkFSMmngQt',   
-            '0k664IuFwVP557Gnx7RhIl'] 
+            '2JSUHbuYs7K5YkFSMmngQt']   
+  
     song_names = ['September', 
                  'Bohemian Rhapsody', 
                  'Over the Hills and Far Away',
                  'Astral Weeks',
                  'Blue World',
-                 'Mahler V Movement I',
-                 'Juice']
+                 'Mahler V Movement I']
+
     
     # puts name and track data into desired output format
     song_ids = np.reshape(song_ids,(len(song_ids),1))
