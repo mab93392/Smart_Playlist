@@ -27,7 +27,7 @@ def song_list():
     
     return np.append(song_ids,song_names,1)
 
-print(song_list())
+
 
 
 
