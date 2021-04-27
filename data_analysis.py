@@ -4,14 +4,15 @@ from track_data import track_data
 from spot_auth import spot_auth
 from song_list import song_list
 from sklearn.mixture import GaussianMixture 
-
+from track_data_extract import track_data_exctract
+from unique_ind import unique_ind
 class data_analysis:
     def __init__(self):
         # listing value names allows for easier chart labeling
         self.stat_names = ['danceability','energy','loudness','speechiness','acousticness','instrumentalness','liveness','valence','tempo']
-        self.seed_track = song_list()
+        self.seed_track = song_list()[int(unique_ind(1,len(song_list()[0])))][0]
         self.token = spot_auth()
-        
+        self.seed_track_data = track_data_exctract(self.token,self.seed_track)
 
 
     # plots histogram of data
@@ -32,15 +33,17 @@ class data_analysis:
             plt.show()   
 
     # performs the actual guassian mixture model analysis
-    def GMM(self,trait_num):
-        features = track_data(self.token,self.seed_track[4,0])
+    def GMM(self):
+        data_pull = track_data(self.token,self.seed_track)
+        data = data_pull[0]
+        tracks = data_pull[1]
         means = []
         vars = []
 
         
-        data = features[:,trait_num].reshape(-1,1)
+        
         # this block optimizes the number of components 
-        n_comps = 10 # starts with 10 components
+        n_comps = 36 # starts with 36 components
         gm_1 = GaussianMixture(n_components = n_comps,random_state=0).fit(data)
         gm_2 = GaussianMixture(n_components = n_comps + 1, random_state = 0).fit(data)
         print('gm_1 bic: %s' % gm_1.aic(data))
@@ -65,9 +68,22 @@ class data_analysis:
         gm_out = GaussianMixture(n_components = n_comps, random_state = 0).fit(data)
 
 
-        for j in range(0,n_comps):
-            means = np.append(means,gm_out.means_[j])
-            vars = np.append(vars,gm_out.covariances_[j])
+        for i in range(0,n_comps):
+    
+            vars_i = []
+
+            for j in range(0,len(self.stat_names)):
+
+                for k in range(0,len(self.stat_names)):
+                    if k == j:
+                        vars_i = np.append(vars_i,gm_out.covariances_[i][j][k])
+            
+            if i == 0:
+                means = gm_out.means_[i]
+                vars = vars_i
+            else:
+                means = np.vstack((means,gm_out.means_[i]))
+                vars = np.vstack((vars,vars_i))
 
            
                        
@@ -78,8 +94,4 @@ class data_analysis:
 
 
     
-        
-
-
-
-
+       
