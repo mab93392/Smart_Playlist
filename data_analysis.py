@@ -10,17 +10,17 @@ class data_analysis:
     def __init__(self):
         # listing value names allows for easier chart labeling
         self.stat_names = ['danceability','energy','loudness','speechiness','acousticness','instrumentalness','liveness','valence','tempo']
-        self.seed_track = song_list()[int(unique_ind(1,len(song_list()[0])))][0]
+        self.seed_track = '2hwOoMtWPtTSSn6WHV7Vp5' #song_list()[int(unique_ind(1,len(song_list()[0])))][0]
         self.token = spot_auth()
         self.seed_track_data = track_data_exctract(self.token,self.seed_track)
-
+        self.seed_track_name = 'Blue World'
 
     # plots histogram of data
     def hist(self): 
         for i in range(0,np.shape(self.seed_track)[0]):
-            data = track_data(self.token,self.seed_track[i,0])
+            data = track_data(self.token,song_list()[i,0])
             plt.figure(figsize=(6.5,7))
-            plt.suptitle('Data for %s' % self.seed_track[i,1])
+            plt.suptitle('Data for %s' % song_list([i,1])
             for j in range(0,np.shape(data)[1]):
                 plt.subplot(len(self.stat_names),1,j+1)
                 plt.title('%s'% self.stat_names[j],fontsize=10)
