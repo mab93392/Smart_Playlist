@@ -5,7 +5,7 @@ from spot_auth import spot_auth
 from client_id import client_id
 from client_secret_id import client_secret_id
 from unique_ind import unique_ind
-
+from track_data_extract import track_data_exctract
 
 def track_data(token,song_id): # retreives id of artist of song of interest 
     # establishes header
@@ -49,32 +49,18 @@ def track_data(token,song_id): # retreives id of artist of song of interest
         for track_ids in track_resp['items']:
             track_list = np.append(track_list,track_ids['id'])
 
-    ind = unique_ind(1500,len(track_list))
-    for j in range(0,1500):
+    ind = unique_ind(300,len(track_list))
+    for j in range(0,300):
         track = ind[j]
-        sng_data_ep = 'https://api.spotify.com/v1/audio-features/%s' % track_list[int(track)]
-        sng_data_req = requests.get(sng_data_ep,headers=header).content
-        sng_data_resp = json.loads(sng_data_req)
-
-        #  pulls the seperate audio features
-        d = sng_data_resp['danceability'] 
-        en = sng_data_resp['energy']
-        ld = sng_data_resp['loudness']
-        spch = sng_data_resp['speechiness']
-        act = sng_data_resp['acousticness']
-        inst = sng_data_resp['instrumentalness']
-        lv = sng_data_resp['liveness']
-        val = sng_data_resp['valence']
-        tmp = sng_data_resp['tempo']
-
-        feature_set = [d,en,ld,spch,act,inst,lv,val,tmp]
-
+        feature_set = track_data_exctract(token,track_list[int(track)])
+        
         if j == 0:
             feature_list = feature_set
             id_list = track_list[int(track)]
         else:
             feature_list = np.vstack((feature_list,feature_set))
             id_list = np.append(id_list,track_list[int(track)])
-    return feature_list
+    
+    return [feature_list,id_list]
 
 
