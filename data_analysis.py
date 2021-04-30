@@ -46,23 +46,20 @@ class data_analysis:
         n_comps = 36 # starts with 36 components
         gm_1 = GaussianMixture(n_components = n_comps,random_state=0).fit(data)
         gm_2 = GaussianMixture(n_components = n_comps + 1, random_state = 0).fit(data)
-        print('gm_1 bic: %s' % gm_1.aic(data))
-        print('gm_2 bic: %s' % gm_2.aic(data))
+       
 
         if gm_2.aic(data) > gm_1.aic(data):
             while gm_2.bic(data) > gm_1.bic(data) and n_comps > 1:
                 gm_2 = gm_1
                 n_comps = n_comps - 1
                 gm_1 = GaussianMixture(n_components = n_comps, random_state = 0).fit(data)
-                print('gm_1 bic: %s' % gm_1.aic(data))
-                print('gm_2 bic: %s' % gm_2.aic(data))
+
         else: 
             while gm_2.aic(data) < gm_1.aic(data):
                 gm_1 = gm_2
                 n_comps = n_comps + 1
                 gm_2 = GaussianMixture(n_components = n_comps, random_state = 0).fit(data)
-                print('gm_1 bic: %s' % gm_1.aic(data))
-                print('gm_2 bic: %s' % gm_2.aic(data))
+
 
         # block that constructs the final analysis of data set
         gm_out = GaussianMixture(n_components = n_comps, random_state = 0).fit(data)
@@ -119,8 +116,8 @@ class data_analysis:
                     if score_k > 8:
                         playlist_i = playlist_i + '%s' % data[3][k] + ', '
                 playlists[playlist_name] = playlist_i
-                # playlist_i = np.reshape(playlist_i,(len(playlist_i),1))
-        
+
+        return [playlists,pl_cnt] #pl_cnt = # of playlists
                 
         
               
@@ -128,5 +125,3 @@ class data_analysis:
 
 
 
-d = data_analysis()
-d.playlist_make()
