@@ -83,15 +83,50 @@ class data_analysis:
                 vars = vars_i
             else:
                 means = np.vstack((means,gm_out.means_[i]))
-                vars = np.vstack((vars,vars_i))
+                vars = np.vstack((vars,vars_i))        
 
-           
-                       
+        return [means,vars,n_comps,tracks,data]
+
+
+    # actually makes the playlists
+    def playlist_make(self):
+        #  initializes needed variables
+        data = self.GMM()
+        playlists = {}
+        pl_cnt = 0
+
+        for i in range(0,data[2]): #itirates through all the componenents
+            
+            # determines if seed track fit within ith distribution
+            diff = np.subtract(self.seed_track_data,data[0][i])
+            score = 0
+            for j in range(0,len(diff)):
+                if np.abs(diff[j]) > data[1][i][j]:
+                    score = score + 1
         
+            # determines if the pulled tracks fit within shared distributions with seed track
+            if score > 8: 
+                pl_cnt = pl_cnt + 1
+                playlist_i = self.seed_track
+                playlist_name = 'playlist %s' % pl_cnt
+                
+                for k in range(0,len(data[3])):
+                    diff_k = np.subtract(data[4][k],data[0][i])
+                    score_k = 0
+                    for j in range(0,len(diff)):
+                        if np.abs(diff_k[j]) > data[1][i][j]:
+                            score_k = score_k + 1
+                    if score_k > 8:
+                        playlist_i = playlist_i + '%s' % data[3][k] + ', '
+                playlists[playlist_name] = playlist_i
+                # playlist_i = np.reshape(playlist_i,(len(playlist_i),1))
         
+                
+        
+              
 
-        return [means,vars]
 
 
-    
-       
+
+d = data_analysis()
+d.playlist_make()
