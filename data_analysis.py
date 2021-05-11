@@ -20,8 +20,8 @@ class data_analysis:
         for i in range(0,np.shape(self.seed_track)[0]):
             data = track_data(self.token,song_list()[i,0])
             plt.figure(figsize=(6.5,7))
-            plt.suptitle('Data for %s' % song_list([i,1])
-            for j in range(0,np.shape(data)[1]):
+            plt.suptitle('Data for %s') % song_list()[i,1]
+            for j in range(0,len(self.stat_names)):
                 plt.subplot(len(self.stat_names),1,j+1)
                 plt.title('%s'% self.stat_names[j],fontsize=10)
                 plt.hist(data[:][:,j],75)
