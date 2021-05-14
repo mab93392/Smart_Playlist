@@ -1,12 +1,12 @@
 // server that will run 
 const http = require('http')
 const fs = require('fs')
-const port = 5501
+const port = 5500
 
 // creates server
 const server = http.createServer(function(req,resp){
     resp.writeHead(200, {'Content-Type' : 'text/html'})
-    fs.readFile('index.html', function(error,data){
+    fs.readFile('index.html',function(error,data){
         if (error){
             resp.writeHead('404')
             resp.write('File not found')
@@ -14,7 +14,9 @@ const server = http.createServer(function(req,resp){
         else{
             resp.write(data)
         }
+        resp.end()
     })
+    
 })
 
 server.listen(port)
