@@ -5,7 +5,7 @@ const express = require('express')
 const {spawn} = require('child_process')
 const app = express()
 const bodyParser = require('body-parser');
-const ids = require('./auth_main.js')
+const ids = require('./clients.js')
 
 // tells server to use public folder
 app.use(express.static('public'))
@@ -15,6 +15,10 @@ app.use(express.static('public'))
 app.get('/', (req,res) => {
     res.sendFile(__dirname + '/index.html')
 })
+// renders playlist page
+app.get('/playlist', (req,res) => {
+    res.sendFile(__dirname + '/playlist.html')
+})
 // renders authorization page
 app.get('/auth', (req,res) => {
     res.sendFile(__dirname + '/auth.html')
@@ -22,7 +26,7 @@ app.get('/auth', (req,res) => {
 // redirects to user auth on Spotify's website
 app.get('/auth_script', (req,res) => {
     // redirect url
-    const redirecturl = 'http://127.0.0.1:5500/auth'
+    const redirecturl = 'http://127.0.0.1:5500/playlist'
 
     // beginning of auth url
     var url = 'https://accounts.spotify.com/authorize'
@@ -43,7 +47,6 @@ app.get('/auth_script', (req,res) => {
     res.redirect(url)
 
 })
-
 
 
 // listens 
