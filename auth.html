@@ -9,14 +9,17 @@
     </head>
     <body>
         <h1>Please Authorize</h1>
+        <div><p1>In order to use Vibe Check, 
+            you must first authorize your account</p1>
+        </div>
+        
         <button id='authorize'>Authorize</button>
+
         <script>
             window.addEventListener('load', () => {
                 const auth = document.querySelector('#authorize')
 
                 auth.addEventListener('click', () => {
-                    // fetch('./auth_script')
-                    // auth.textContent = 'clicked'
                     location.href = ('./auth_script')
                 })
                 
