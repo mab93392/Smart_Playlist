@@ -7,9 +7,30 @@ const app = express()
 const bodyParser = require('body-parser');
 const ids = require('./clients.js')
 
-// tells server to use public folder
-app.use(express.static('public'))
 
+// // tells server to use public folder
+// app.use(express.static('public'))
+
+const users = [
+   {'code': 'AQDMGNShWIdN7Llx11jwYosgiXqQ1fyXN82GrulG6dsT-AYosX1_q1nh5GCE15E3n_S-5C-KFh53hSdRfsvgNpoLxnPWBwgJsJzTxHcpPkhKpN-1mT7RM15JKVfMGOmelHHh5-t3NKMVu5-nQsJXGxvbJqNvhDcXDi26ybzhYSJjuyByXlXkCiltOnFVhauKU3PMMPXTB0YTkF12yRYXmdMcptKhL_-trxzXxrAVTIOBR6svxVCkqBiYsdi-sLTrq6dT5UyWda2N-J4m6u6XfhN_Ju9mNX9EriEBWSwCfO41wi3kiGBbA72ftmhbUVi4eSOAYdil_Id08wT4OcwI6tovJ3U_NXSCgTRpKfeOvSKvgoKEsuTddLY6NdKDhJifSG8UmlVXN18VSgPfYUZjUG3yIvewh6nS_BpZVRKwnWlBcUPmnbHHW6Dw21fzqoXHnZAvKJLHeUzD-2T1DwPYDm-UjsrQQiSRrC-WQjjDoK4EkfV7IIcZGKf64yJDN2oCz632C3_jj-eoUNUYMSMl3IjKOJkCS5SrEozch0F2f4cxCydKCFpYiHRh9d39VIpXSl8h1-1w3J9bt2T-OoKy8J_kXT7Yux_Alcj7-MSjHmj2ObwX',
+   'id': 'mbush-12'},
+]
+
+// user endpoint
+app.get('/users', (req,res) => {
+    res.json(users)
+})
+
+// endpoint for specific user
+app.get('/users/:id', (req,res) => {
+    const {id} = req.params
+    const queried_user = users.find((user) => 
+        user.id === id
+    )
+    res.json(queried_user)
+})
+
+    
 
 // renders homepage
 app.get('/', (req,res) => {
