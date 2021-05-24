@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Please register your Spotify account</h1>
+    <input id='username' placeholder="Spotify Username">
+    <div><button id='submit'>Submit</button></div>
+    <script>
+        window.addEventListener('load', () => {
+                const sub_but = document.querySelector('#submit')
+                const user_inp = document.querySelector('#username')
+                sub_but.addEventListener('click', () =>{
+                    trunc_url = location.href.split('=')
+
+                    location.href = `/add_user/${username.value}/${trunc_url[1]}`
+                })
+
+            })  
+        </script>
+                   
+    
+</body>
+</html>

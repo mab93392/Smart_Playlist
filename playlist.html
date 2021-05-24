@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    <h1 id='header'>Welcome</h1>
+    <p1>Start Making Playlists</p1>
+    
+    <div><input id='seed_track' placeholder="Seed Track Link"></div>
+    <div><button id='create'>Create Playlist</button></div>
+
+    <script>
+        window.addEventListener('load', () => {
+            const header = document.querySelector('#header')
+            const user = location.href.split(':5500/users_page/')
+            const seed_track = document.querySelector('#seed_track')
+            const create = document.querySelector('#create')
+
+            header.textContent = 'Welcome ' + user[1]
+            
+            create.addEventListener('click', () => {
+                const seed_id = seed_track.value.split('?si=')[1]
+                location.href = '/create_playlist/' + user + '/' + seed_id
+                
+            })
+            
+        })
+    </script>
+</body>
+</html>
