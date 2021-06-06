@@ -6,20 +6,18 @@ const {spawn} = require('child_process')
 const app = express()
 const bodyParser = require('body-parser');
 const ids = require('./clients.js')
+const fs = require('fs')
 
-
-// // tells server to use public folder
-// app.use(express.static('public'))
-
-const users = [
-//    {'code': 'AQDMGNShWIdN7Llx11jwYosgiXqQ1fyXN82GrulG6dsT-AYosX1_q1nh5GCE15E3n_S-5C-KFh53hSdRfsvgNpoLxnPWBwgJsJzTxHcpPkhKpN-1mT7RM15JKVfMGOmelHHh5-t3NKMVu5-nQsJXGxvbJqNvhDcXDi26ybzhYSJjuyByXlXkCiltOnFVhauKU3PMMPXTB0YTkF12yRYXmdMcptKhL_-trxzXxrAVTIOBR6svxVCkqBiYsdi-sLTrq6dT5UyWda2N-J4m6u6XfhN_Ju9mNX9EriEBWSwCfO41wi3kiGBbA72ftmhbUVi4eSOAYdil_Id08wT4OcwI6tovJ3U_NXSCgTRpKfeOvSKvgoKEsuTddLY6NdKDhJifSG8UmlVXN18VSgPfYUZjUG3yIvewh6nS_BpZVRKwnWlBcUPmnbHHW6Dw21fzqoXHnZAvKJLHeUzD-2T1DwPYDm-UjsrQQiSRrC-WQjjDoK4EkfV7IIcZGKf64yJDN2oCz632C3_jj-eoUNUYMSMl3IjKOJkCS5SrEozch0F2f4cxCydKCFpYiHRh9d39VIpXSl8h1-1w3J9bt2T-OoKy8J_kXT7Yux_Alcj7-MSjHmj2ObwX',
-//    'id': 'mbush-12'},
-]
+const users_data = fs.readFileSync('users.json', (err) => {
+    console.log('could not load data')
+})
+const users = JSON.parse(users_data)
 
 // user endpoint
 app.get('/users', (req,res) => {
-    res.json(users)
+    res.send(users)
 })
+
 
 // handles the user specific playlist page
 app.get('/users_page/:id', (req,res) => {
@@ -41,11 +39,19 @@ app.get('/add_user/:id/:code', (req,res) => {
     )
     if (queried_user === undefined){
         new_user = {
-            'code': code,
-            'id': id
+            'id': id,
+            'code': code
         }
-        users.push(new_user)
-        console.log(id)
+        const data = JSON.stringify(new_user)
+
+        fs.writeFile('users.json',data,(err) => {
+            if (err) {
+                console.log('could not write new user data')
+            }
+            
+            console.log('new user data saved')
+        })
+
         res.redirect('/users_page/' + id)
     }
     else {
@@ -78,6 +84,7 @@ app.get('/submit/:id', (req,res) => {
     const queried_user = users.find((user) => 
         user.id === id
     )
+    
     if (queried_user === undefined){
         res.redirect('/auth')
     }
@@ -93,7 +100,23 @@ app.get('/create_playlist/:id/:song_id', (req,res) => {
     const queried_user = users.find((user) => 
         user.id === id
     )
-    const cp = spawn(['python','./child.py',`${queried_user.code}`,`${id}`,`${song_id}`])
+    const code = queried_user.code
+ 
+    const cp = spawn('python3',['child.py',id,code,song_id])
+
+    cp.stdout.on('data', (data) => {
+        console.log(data.toString())
+    })
+
+    cp.stderr.on('data', (data) => {
+        console.log(`stdout: ${data}`)
+    })
+
+    cp.on('close', (code) => {
+        console.log(`closed with code: ${code}`)
+    })
+
+    res.redirect('/users_page/' + id)
 })
 
 // renders homepage
