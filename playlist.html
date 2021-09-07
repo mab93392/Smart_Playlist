@@ -10,7 +10,6 @@
     
     <h1 id='header'>Welcome</h1>
     <p1>Start Making Playlists</p1>
-    
     <div><input id='seed_track' placeholder="Seed Track Link"></div>
     <div><button id='create'>Create Playlist</button></div>
 
@@ -25,7 +24,7 @@
             
             create.addEventListener('click', () => {
                 const seed_id = seed_track.value.split('?si=')[1]
-                location.href = '/create_playlist/' + user + '/' + seed_id
+                location.href = '/create_playlist/' + user[1] + '/' + seed_id
                 
             })
             

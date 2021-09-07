@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+    </head>
+    <body>
+        <div><h1>Welome to Vibe Check</h1>
+            <p1>Please Sign In</p1></div>
+        <div>
+            <input id='username' placeholder="Spotify Username">
+        </div>
+        <div><button id='submit'>Submit</button></div>
+        <script>
+            window.addEventListener('load', () => {
+                const sub_but = document.querySelector('#submit')
+                const user_inp = document.querySelector('#username')
+                console.log('live script')
+                sub_but.addEventListener('click', () =>{
+                    const user = username.value
+                    url = './submit/' + user
+                    location.href = url
+                    
+                })
+                
+            })
+        </script>
+
+    </body>
+    
+</html>

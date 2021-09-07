@@ -6,7 +6,7 @@ from song_list import song_list
 from sklearn.mixture import GaussianMixture 
 from track_data_extract import track_data_exctract
 from unique_ind import unique_ind
-class data_analysis:
+class data_analysis():
     def __init__(self):
         # listing value names allows for easier chart labeling
         self.stat_names = ['danceability','energy','loudness','speechiness','acousticness','instrumentalness','liveness','valence','tempo']
@@ -33,7 +33,8 @@ class data_analysis:
             plt.show()   
 
     # performs the actual guassian mixture model analysis
-    def GMM(self):
+    def GMM(self,seed_track):
+        self.seed_track = seed_track
         data_pull = track_data(self.token,self.seed_track)
         data = data_pull[0]
         tracks = data_pull[1]
@@ -86,9 +87,11 @@ class data_analysis:
 
 
     # actually makes the playlists
-    def playlist_make(self):
+    def playlist_make(self,seed_track):
         #  initializes needed variables
-        data = self.GMM()
+        self.seed_track = seed_track
+        self.seed_track_data = track_data_exctract(self.token,self.seed_track)
+        data = self.GMM(seed_track)
         playlists = {}
         pl_cnt = 0
 
@@ -118,10 +121,3 @@ class data_analysis:
                 playlists[playlist_name] = playlist_i
 
         return [playlists,pl_cnt] #pl_cnt = # of playlists
-                
-        
-              
-
-
-
-

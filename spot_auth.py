@@ -1,5 +1,4 @@
 import requests # allows communication w/API
-import json
 import base64 # allows for conversion to base 64
 # calls the client Ids
 # this allows for usable to code to be public w/o giving Ids out

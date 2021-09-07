@@ -7,6 +7,8 @@ const app = express()
 const bodyParser = require('body-parser');
 const ids = require('./clients.js')
 const fs = require('fs')
+const code_challenge = require('./code_challenge')
+const code_verifier = require('./code_verifier.js')
 
 const users_data = fs.readFileSync('users.json', (err) => {
     console.log('could not load data')
@@ -33,40 +35,70 @@ app.get('/register', (req,res) => {
 app.get('/add_user/:id/:code', (req,res) => {
     const {id} = req.params
     const {code} = req.params
-    console.log(id)
-    const queried_user = users.find((user) => 
-        user.id === id
-    )
-    if (queried_user === undefined){
-        new_user = {
-            'id': id,
-            'code': code
-        }
-        const data = JSON.stringify(new_user)
+   
 
-        fs.writeFile('users.json',data,(err) => {
-            if (err) {
-                console.log('could not write new user data')
-            }
+        for(let i = 0; i < users.length; i++){
+            if(users[i].user.id === id){
+               users[i].user.code = code
+                let data = users
+                data = JSON.stringify(data)
+        
+                fs.writeFile('users.json',data,(err) => {
+                    if (err) {
+                        console.log('could not update user data')
+                    }
+                    else{
+                    console.log('user data updated')
+                    }
+                })
             
-            console.log('new user data saved')
-        })
+            }
+        }
 
         res.redirect('/users_page/' + id)
-    }
-    else {
-        res.redirect('/users_page/' + id)
-    }
 })
 
 
 // endpoint for specific user by id
-app.get('/users_id/:id', (req,res) => {
+app.get('/users/:id', (req,res) => {
     const {id} = req.params
-    const queried_user = users.find((user) => 
-        user.id === id
+    const queried_user = users.find((ind) => 
+        ind.user.id === id
     )
+    // console.log(users)
+    // console.log(JSON.stringify(queried_user))
     res.json(queried_user)
+})
+
+// put endpoint for users json
+app.put('/update/:id/:gt/:cr/:rf', (req,res) => {
+    console.log('put')
+    const {id} = req.params // id
+    const {gt} = req.params // grant time
+    
+    const {cr} = req.params // current token
+    const {rf} = req.params // refresh token
+
+    for(let i = 0; i < users.length; i++){
+        if(users[i].user.id === id){
+            users[i].user.tokens.grant_time = gt
+            users[i].user.tokens.current = cr
+            users[i].user.tokens.refresh = rf
+            let data = users
+            data = JSON.stringify(data)
+    
+            fs.writeFile('users.json',data,(err) => {
+             if (err) {
+                    console.log('could not update user data')
+                }
+        
+                console.log('user data updated')
+            })
+        }
+    }
+
+    res.redirect(`/users/${id}`)
+    
 })
 
 // retrieves user based on code
@@ -82,27 +114,24 @@ app.get('/users_code/:code', (req,res) => {
 app.get('/submit/:id', (req,res) => {
     const {id} = req.params
     const queried_user = users.find((user) => 
-        user.id === id
+        user.user.id === id
     )
     
     if (queried_user === undefined){
-        res.redirect('/auth')
+        res.redirect('/auth_script/' + id)
     }
     else {
         res.redirect('/users_page/' + id)
     }
+    
 })   
 
 // runs the playlist creation python software
 app.get('/create_playlist/:id/:song_id', (req,res) => {
     const {id} = req.params
     const {song_id} = req.params
-    const queried_user = users.find((user) => 
-        user.id === id
-    )
-    const code = queried_user.code
- 
-    const cp = spawn('python3',['child.py',id,code,song_id])
+    
+    const cp = spawn('python3',['create_pl2.py',id]) //,id,code,song_id])
 
     cp.stdout.on('data', (data) => {
         console.log(data.toString())
@@ -136,9 +165,44 @@ app.get('/auth', (req,res) => {
 
 
 // redirects to user auth on Spotify's website
-app.get('/auth_script', (req,res) => {
+app.get('/auth_script/:id', (req,res) => {
+    // adds user to json
+    const {id} = req.params
+    const ver = code_verifier()
+    const challenge = code_challenge(ver)
+    // const challenge = code_challenge(ver)
+    console.log(challenge)
+    let users = []
+
+    
+    let  new_user = {
+            user : { 'id': id,
+                    'code': '',
+                    'code_verifier' : ver,
+                    'tokens' : {'current': '',
+                              'refresh': '',
+                              'grant_time': ''
+                        }}
+            }
+        
+    users.push(new_user)
+    let data = users
+
+    data = JSON.stringify(data)
+
+    fs.writeFile('users.json',data,(err) => {
+        if (err) {
+            console.log('could not write new user data')
+        }
+        
+        console.log('new user data saved')
+    })
+    
+    
+    
     // redirect url
     const redirecturl = 'http://127.0.0.1:5500/register'
+    
 
     // beginning of auth url
     var url = 'https://accounts.spotify.com/authorize'
@@ -155,10 +219,15 @@ app.get('/auth_script', (req,res) => {
     url += '&client_id=' + ids.client
     url += '&scope=' + scopes
     url += '&redirect_uri=' + encodeURI(redirecturl)
+    url += '&code_challenge_method=S256'
+    url += '&code_challenge' + challenge
+
 
     res.redirect(url)
 
 })
+
+
 
 
 // listens 
