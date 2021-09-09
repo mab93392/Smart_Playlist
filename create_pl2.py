@@ -15,11 +15,12 @@ class smart_playlist:
     # inits variables
     def __init__(self): 
         self.id = sys.argv[1]
-        self.url = 'http://127.0.0.1:5500/users/' + self.id
+        self.url = 'http://127.0.0.1:5500/users/' + self.id 
         req = requests.get(self.url).json()
         self.user = req
         self.playlist = []
         self.pl_name = ''
+        self.pl_id = ''
         
     
     # gets token if one is not already in the user's data i.e they're new
@@ -82,19 +83,7 @@ class smart_playlist:
         req = requests.get(self.url).json()
         self.user = req
         print('ran: %s' % time.time())
-
-    def get_pl(self):
-        # establishes inputs
-        header = {
-            "Authorization" : "Bearer " + self.user['user']['tokens']['current'],
-            "{user_id}" : self.user['user']['id']
-        }
-        url = 'https://api.spotify.com/v1/users/' + self.user['user']['id'] + '/playlists'
-
-        req = requests.get(url, headers= header).content
-        print(req)
-
-
+        
     def make_playlist(self):
         header = {
             "Authorization" : "Bearer " + self.user['user']['tokens']['current']
@@ -106,8 +95,8 @@ class smart_playlist:
 
         seed_track = song_req['item']['id']
         self.pl_name = song_req['item']['name']
-        print('started')
-        self.get_pl()
+        
+        
 
         # # makes playlist
         # Da = data_analysis()
@@ -117,20 +106,24 @@ class smart_playlist:
         # posts playlist
         post_url = 'https://api.spotify.com/v1/users/%s/playlists' % self.user['user']['id']
         post_header = {
-            "Authorization" : "Bearer " + self.user['user']['tokens']['current'],
-            "{user_id}" : self.user['user']['id'],
+            "Authorization" : "Bearer " + self.user['user']['tokens']['current']
+        }
+        post_body = {
             "name" : self.pl_name
         }
-        requests.post(post_url, headers= post_header)
-
+        req = requests.post(post_url, headers= post_header, json= post_body).json()
+        print(req['id'])
         print('ran: %s' % time.time())
 
+
+        
         #populates playlist
 
 
-
+        print('ran: %s' % time.time())
 sp = smart_playlist()
 
 # sp.refresh_token()
 # sp.token_request()
 sp.make_playlist()
+# sp.get_pl()
