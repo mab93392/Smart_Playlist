@@ -107,17 +107,18 @@ class data_analysis():
             # determines if the pulled tracks fit within shared distributions with seed track
             if score > 8: 
                 pl_cnt = pl_cnt + 1
-                playlist_i = self.seed_track
+                playlist_i = ['spotify:track:' + self.seed_track]
                 playlist_name = 'playlist %s' % pl_cnt
                 
-                for k in range(0,len(data[3])):
+                for k in range(0,85):
                     diff_k = np.subtract(data[4][k],data[0][i])
                     score_k = 0
                     for j in range(0,len(diff)):
                         if np.abs(diff_k[j]) > data[1][i][j]:
                             score_k = score_k + 1
                     if score_k > 8:
-                        playlist_i = playlist_i + '%s' % data[3][k] + ', '
+                        add = 'spotify:track:%s' % data[3][k] 
+                        playlist_i = np.append(playlist_i, add)
                 playlists[playlist_name] = playlist_i
 
         return [playlists,pl_cnt] #pl_cnt = # of playlists

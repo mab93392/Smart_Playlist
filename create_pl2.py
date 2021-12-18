@@ -1,6 +1,5 @@
 # the script that actually takes input from web app and publishes 
 # playlist to spotify
-from create_playlist import playlist
 from data_analysis import data_analysis
 import json
 import requests
@@ -69,7 +68,7 @@ class smart_playlist:
         }
 
         req = requests.post(url,data= body).json()
-        print(req)
+        # print(req)
         # extracts relevant data from response &  updates
         # the user data 
         self.user['user']['tokens']['current'] = req['access_token']
@@ -85,45 +84,68 @@ class smart_playlist:
         print('ran: %s' % time.time())
         
     def make_playlist(self):
+        print('starting to make playlist')
         header = {
             "Authorization" : "Bearer " + self.user['user']['tokens']['current']
         }
 
         # gets current song
+        print('attempting to get song')
         song_url = 'https://api.spotify.com/v1/me/player/currently-playing' 
         song_req = requests.get(song_url, headers= header).json()
 
+        print(song_req)
         seed_track = song_req['item']['id']
         self.pl_name = song_req['item']['name']
-        
+        print('got song')
         
 
         # # makes playlist
-        # Da = data_analysis()
-        # self.playlist = Da.playlist_make(seed_track)
-        # print(self.playlist[0]['playlist 1'])
+        print('starting to make playlist data')
+        Da = data_analysis()
+        self.playlist = Da.playlist_make(seed_track)
+        print(self.playlist[0]['playlist 1'])
+        print('made playlist data')
         
         # posts playlist
         post_url = 'https://api.spotify.com/v1/users/%s/playlists' % self.user['user']['id']
-        post_header = {
-            "Authorization" : "Bearer " + self.user['user']['tokens']['current']
-        }
+        
         post_body = {
             "name" : self.pl_name
         }
-        req = requests.post(post_url, headers= post_header, json= post_body).json()
-        print(req['id'])
-        print('ran: %s' % time.time())
+        print(post_body)
+        req = requests.post(post_url, headers= header, json= post_body).json()
+        self.pl_id = req['id']
+        print('playlist made')
 
-
-        
         #populates playlist
+        print('starting to populate playlist')
+        post_header = {
+            "Authorization" : "Bearer " + self.user['user']['tokens']['current'],
+            "Content-Type" : "application/json"
+        }
 
+        playlist_body = json.dumps({
+            "uris" : ["spotify:track:4iV5W9uYEdYUVa79Axb7Rh","spotify:track:1301WleyT98MSxVHPZCA6M"]  #self.playlist[0]['playlist 1']
+        })
 
-        print('ran: %s' % time.time())
+        uris = 'spotify:track:4iV5W9uYEdYUVa79Axb7Rh'
+        pop_url = 'https://api.spotify.com/v1/playlists/%s/tracks' % self.pl_id
+
+        pop_req = requests.post(pop_url, headers= post_header, data= playlist_body)
+        
+        print(pop_req.content())
+        print(self.pl_id)
+        print('playlist populated')
 sp = smart_playlist()
 
 # sp.refresh_token()
 # sp.token_request()
+print('starting')
 sp.make_playlist()
+print('')
+print('')
+print('')
+print('')
+print('')
 # sp.get_pl()

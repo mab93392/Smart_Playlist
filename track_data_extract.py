@@ -13,7 +13,7 @@ def track_data_exctract(token,song_id):
     sng_data_ep = 'https://api.spotify.com/v1/audio-features/%s' % song_id
     sng_data_req = requests.get(sng_data_ep,headers=header).content
     sng_data_resp = json.loads(sng_data_req)
-
+    
     #  pulls the seperate audio features
     d = sng_data_resp['danceability'] 
     en = sng_data_resp['energy']

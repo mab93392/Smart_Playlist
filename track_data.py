@@ -40,26 +40,27 @@ def track_data(token,song_id): # retreives id of artist of song of interest
             album_list = np.append(album_list,alb['id'])
 
     track_list = []
-    for alb_id in album_list:
+    # for alb_id in album_list:
+    for alb_id in range(0,len(album_list)):
         # gets track ids for an album
-        tracks_ep = 'https://api.spotify.com/v1/albums/%s/tracks' % alb_id
+        tracks_ep = 'https://api.spotify.com/v1/albums/%s/tracks' % album_list[alb_id]
         track_req = requests.get(tracks_ep, headers=header).content
         track_resp = json.loads(track_req)
-
         for track_ids in track_resp['items']:
             track_list = np.append(track_list,track_ids['id'])
 
-    ind = unique_ind(300,len(track_list))
-    for j in range(0,300):
-        track = ind[j]
-        feature_set = track_data_exctract(token,track_list[int(track)])
+    ind = unique_ind(100,len(track_list))
+    for j in range(0,100):
+        track = int(ind[j])
+       
+        feature_set = track_data_exctract(token,track_list[track])
         
         if j == 0:
             feature_list = feature_set
-            id_list = track_list[int(track)]
+            id_list = feature_list
         else:
             feature_list = np.vstack((feature_list,feature_set))
-            id_list = np.append(id_list,track_list[int(track)])
+            id_list = np.append(id_list,track)
     
     return [feature_list,id_list]
 
