@@ -47,6 +47,7 @@ def track_data(token,song_id): # retreives id of artist of song of interest
         track_req = requests.get(tracks_ep, headers=header).content
         track_resp = json.loads(track_req)
         for track_ids in track_resp['items']:
+            
             track_list = np.append(track_list,track_ids['id'])
 
     ind = unique_ind(100,len(track_list))
@@ -57,10 +58,10 @@ def track_data(token,song_id): # retreives id of artist of song of interest
         
         if j == 0:
             feature_list = feature_set
-            id_list = feature_list
+            id_list = track_list[track]
         else:
             feature_list = np.vstack((feature_list,feature_set))
-            id_list = np.append(id_list,track)
+            id_list = np.append(id_list,track_list[track])
     
     return [feature_list,id_list]
 

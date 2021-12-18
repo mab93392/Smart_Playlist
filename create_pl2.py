@@ -9,6 +9,8 @@ import sys
 import time
 import numpy as np
 
+from track_data import track_data
+
 
 class smart_playlist:
     # inits variables
@@ -125,16 +127,20 @@ class smart_playlist:
             "Content-Type" : "application/json"
         }
 
-        playlist_body = json.dumps({
-            "uris" : ["spotify:track:4iV5W9uYEdYUVa79Axb7Rh","spotify:track:1301WleyT98MSxVHPZCA6M"]  #self.playlist[0]['playlist 1']
-        })
 
-        uris = 'spotify:track:4iV5W9uYEdYUVa79Axb7Rh'
-        pop_url = 'https://api.spotify.com/v1/playlists/%s/tracks' % self.pl_id
+        uris_len = (np.shape(self.playlist[0]['playlist 1']))
+        uris = self.playlist[0]['playlist 1']
+        print(uris)
 
-        pop_req = requests.post(pop_url, headers= post_header, data= playlist_body)
+       
+        for k in range(0,uris_len[0]):
+            playlist_body = json.dumps({
+                    "uris" : ['%s' % uris[k]]
+            })
+            pop_url = 'https://api.spotify.com/v1/playlists/%s/tracks' % self.pl_id
+
+            requests.post(pop_url, headers= post_header, data= playlist_body)
         
-        print(pop_req.content())
         print(self.pl_id)
         print('playlist populated')
 sp = smart_playlist()
@@ -143,6 +149,7 @@ sp = smart_playlist()
 # sp.token_request()
 print('starting')
 sp.make_playlist()
+
 print('')
 print('')
 print('')

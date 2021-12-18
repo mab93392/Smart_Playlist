@@ -94,7 +94,8 @@ class data_analysis():
         data = self.GMM(seed_track)
         playlists = {}
         pl_cnt = 0
-
+        print('data:')
+        print(data[2])
         for i in range(0,data[2]): #itirates through all the componenents
             
             # determines if seed track fit within ith distribution
@@ -107,10 +108,12 @@ class data_analysis():
             # determines if the pulled tracks fit within shared distributions with seed track
             if score > 8: 
                 pl_cnt = pl_cnt + 1
-                playlist_i = ['spotify:track:' + self.seed_track]
+                playlist_i = []
                 playlist_name = 'playlist %s' % pl_cnt
                 
                 for k in range(0,85):
+                    if k == 0:
+                        playlist_i = np.append(playlist_i, 'spotify:track:' + self.seed_track)
                     diff_k = np.subtract(data[4][k],data[0][i])
                     score_k = 0
                     for j in range(0,len(diff)):
